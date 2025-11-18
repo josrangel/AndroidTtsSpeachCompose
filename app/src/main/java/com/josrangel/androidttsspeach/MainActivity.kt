@@ -1,10 +1,13 @@
 package com.josrangel.androidttsspeach
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import com.josrangel.androidttsspeach.ui.MainScreen
 import com.josrangel.androidttsspeach.ui.theme.AndroidTtsSpeachTheme
 import com.josrangel.androidttsspeach.viewmodel.TextToSpeechViewModel
@@ -23,4 +26,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    val fakeViewModel = TextToSpeechViewModel(Application())
+    MainScreen(viewModel = fakeViewModel)
 }
