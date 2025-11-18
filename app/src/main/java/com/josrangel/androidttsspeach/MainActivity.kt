@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import com.josrangel.androidttsspeach.ui.MainScreen
 import com.josrangel.androidttsspeach.ui.theme.AndroidTtsSpeachTheme
 import com.josrangel.androidttsspeach.viewmodel.TextToSpeechViewModel
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             AndroidTtsSpeachTheme {
                 MainScreen(textToSpeechViewModel)
