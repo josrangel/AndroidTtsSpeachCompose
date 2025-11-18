@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.josrangel.androidttsspeach.viewmodel.TextToSpeechViewModel
@@ -29,41 +30,74 @@ fun MainScreen(viewModel: TextToSpeechViewModel) {
 
     var expanded by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = viewModel::updateText,
-            label = { Text("Ingresa texto") },
-            modifier = Modifier.fillMaxWidth()
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 50.dp, bottom = 150.dp)) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = viewModel::updateText,
+                label = { Text("Ingresa texto") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
 
-        Spacer(Modifier.height(12.dp))
+            Text("Historial", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(start = 16.dp))
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Box {
-                Button(onClick = { expanded = true }) {
-                    Text(languageOptions.first { it.second == language }.first)
-                }
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    languageOptions.forEach { (name, locale) ->
-                        DropdownMenuItem(text = { Text(name) }, onClick = {
-                            viewModel.setLanguage(locale)
-                            expanded = false
-                        })
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(history) { entry ->
+                    val date = remember(entry.timestamp) {
+                        java.text.SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(entry.timestamp))
                     }
+                    Text("• ${entry.text}  —  $date")
                 }
-            }
-
-            Button(onClick = viewModel::speak, enabled = text.isNotBlank()) {
-                Text("Reproducir")
             }
         }
 
-        Spacer(Modifier.height(20.dp))
-        Text("Historial", style = MaterialTheme.typography.labelLarge)
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(history) { entry ->
-                Text("• ${entry.text}")
+        // Botones fijos abajo
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box {
+                    Button(onClick = { expanded = true }) {
+                        Text(languageOptions.first { it.second == language }.first)
+                    }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        languageOptions.forEach { (name, locale) ->
+                            DropdownMenuItem(text = { Text(name) }, onClick = {
+                                viewModel.setLanguage(locale)
+                                expanded = false
+                            })
+                        }
+                    }
+                }
+
+                Button(onClick = viewModel::speak, enabled = text.isNotBlank()) {
+                    Text("Reproducir")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(3.dp))
+
+            // Botón de limpiar texto
+            Button(
+                onClick = { viewModel.updateText("") },
+                enabled = text.isNotBlank(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Limpiar texto")
             }
         }
     }
